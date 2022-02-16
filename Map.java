@@ -1,25 +1,29 @@
-import java.util.Random;
-
+/**
+ * Reads and contains in memory the map of the game.
+ */
 public class Map {
 
     /* Representation of the map */
-    private char[][] map;
+    private final char[][] map;
+
+    /* Map name */
+    private final String mapName;
 
     /* Gold required for the human player to win */
-    private int goldRequired;
+    private final int goldRequired;
 
-    /* Current coordinates of the player */
-    private int playerCoordinateX;
-    private int playerCoordinateY;
+    /* Dimensions of the map */
+    private int dimensionX;
+    private int dimensionY;
 
-    /* Current coordinates of the bot */
-    private int botCoordinateX;
-    private int botCoordinateY;
-
-    /* Hold the value of the tile the player moves on to */
-    private char currentTile;
-
+    /**
+     * Default constructor, creates the default map "Very small Labyrinth of doom".
+     */
     public Map() {
+        /*
+         * Initialises the necessary fields.
+         */
+        this.mapName = "Very small Labyrinth of Doom";
         this.goldRequired = 2;
         this.map = new char[][]{
                 {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
@@ -32,15 +36,20 @@ public class Map {
                 {'#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#'},
                 {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
         };
-        int[] playerLocation = spawnPlayer(this.map, 'P');
-        int[] botLocation = spawnPlayer(this.map, 'B');
-        this.playerCoordinateX = playerLocation[1];
-        this.playerCoordinateY = playerLocation[0];
-        this.botCoordinateX = botLocation[1];
-        this.botCoordinateY = botLocation[0];
-        setCurrentTile(this.map[this.playerCoordinateY][this.playerCoordinateX]);
-        setPlayerLocation(this.playerCoordinateX, this.playerCoordinateY);
-        setBotLocation(botCoordinateX, botCoordinateY);
+        setDimensions();
+    }
+
+    /**
+     * Constructor that accepts a representation of the map, the number of gold required and the map name.
+     */
+    public Map(char[][] map, int goldRequired, String name) {
+        /*
+         * Sets the necessary fields as well as the dimensions by calling the setDimensions method.
+         */
+        this.map = map;
+        this.goldRequired = goldRequired;
+        this.mapName = name;
+        setDimensions();
     }
 
     /**
@@ -51,106 +60,40 @@ public class Map {
     }
 
     /**
-     * @return : The map as stored in memory.
+     * @return : The representation map as stored in memory.
      */
     protected char[][] getMap() {
         return this.map;
     }
 
-    /**
-     * @return : The X coordinate of the player on the map.
-     */
-    protected int getPlayerCoordinateX() {
-        return this.playerCoordinateX;
-    }
 
     /**
-     * @return : The Y coordinate of the player on the map.
+     * @return : The name of the current map.
      */
-    protected int getPlayerCoordinateY() {
-        return this.playerCoordinateY;
-    }
-
-    protected int getBotCoordinateX() {
-        return this.botCoordinateX;
-    }
-
-    protected int getBotCoordinateY() {
-        return this.botCoordinateY;
+    protected String getMapName() {
+        return this.mapName;
     }
 
     /**
-     * @return : The value of the current tile that the player is on.
+     * @return : The X dimension of the current map
      */
-    protected char getCurrentTile() {
-        return this.currentTile;
+    protected int getDimensionX() {
+        return dimensionX;
     }
 
-    private void setPlayerCoordinateX(int playerCoordinateX) {
-        this.playerCoordinateX = playerCoordinateX;
+    /**
+     * @return : The Y dimension of the current map
+     */
+    protected int getDimensionY() {
+        return dimensionY;
     }
 
-    private void setPlayerCoordinateY(int playerCoordinateY) {
-        this.playerCoordinateY = playerCoordinateY;
+    /**
+     * Sets the dimensions of the map.
+     */
+    private void setDimensions() {
+        this.dimensionY = this.map.length;
+        this.dimensionX = this.map[0].length;
     }
 
-    private void setBotCoordinateX(int botCoordinateX) {
-        this.botCoordinateX = botCoordinateX;
-    }
-
-    private void setBotCoordinateY(int botCoordinateY) {
-        this.botCoordinateY = botCoordinateY;
-    }
-
-    protected void setCurrentTile(char currentTile) {
-        this.currentTile = currentTile;
-    }
-
-    private void resetTile() {
-        this.map[this.playerCoordinateY][this.playerCoordinateX] = this.currentTile;
-    }
-
-    private void resetTileBot() {
-        this.map[this.botCoordinateY][this.botCoordinateX] = this.currentTile;
-    }
-
-    protected int[] spawnPlayer(char[][] map, char enemy) {
-        Random randNumber = new Random();
-        int[] randomLocation = new int[2];
-        int randomRow;
-        int randomColumn;
-        char location;
-        do {
-            randomRow = randNumber.nextInt(map.length);
-            randomColumn = randNumber.nextInt(map[0].length);
-            location = this.map[randomRow][randomColumn];
-            randomLocation[0] = randomRow;
-            randomLocation[1] = randomColumn;
-        } while (location == '#' || location == 'G' || location == enemy);
-        return randomLocation;
-    }
-
-    protected void setPlayerLocation(int coordinateX, int coordinateY) {
-        resetTile();
-        setCurrentTile(this.map[coordinateY][coordinateX]);
-        this.map[coordinateY][coordinateX] = 'P';
-        setPlayerCoordinateX(coordinateX);
-        setPlayerCoordinateY(coordinateY);
-    }
-
-    protected void setBotLocation(int coordinateX, int coordinateY) {
-        resetTileBot();
-        setCurrentTile(this.map[coordinateY][coordinateX]);
-        this.map[coordinateY][coordinateX] = 'B';
-        setBotCoordinateX(coordinateX);
-        setBotCoordinateY(coordinateY);
-    }
-
-    protected int[] getPlayerLocation() {
-        return new int[]{this.playerCoordinateX, this.playerCoordinateY};
-    }
-
-    protected int[] getBotLocation() {
-        return new int[]{this.botCoordinateX, this.botCoordinateY};
-    }
 }
